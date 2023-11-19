@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html class="__THEME__">
+
+<head>
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="20000" />
+    <title>SVX Monitor</title>
+    <link rel="stylesheet" href="theme_template.css">
+    <link rel="stylesheet" href="mysite_template.css">
+    <meta name="description" content="Copyright (c) 2023 Jean-Michel Cohen - F4JDN" />
+</head>
+
+<body>
+    <noscript>You must enable JavaScript</noscript>
+
+    <div id="sitelogo" style="display:none">__SITE_LOGO__</div>
+
+    __BUTTON_BAR__
+
+    <div id="modals">
+        <!-- The Followup -->
+        <div id="followUpModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content-followup">
+                <span class="close close-followup">&times;</span>
+                <table class="tablefixed">
+                    <thead id="theadFollowUp" tbodyid="followup">
+                        <tr class="headerRow">
+                            <th class="thlelog">History</th>
+                        </tr>
+                    </thead>
+                    <tbody id="followup">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="siteHeader" style="display:none">
+
+        <div id="insertpoint" class="cardcontainer"></div>
+        
+    </div>
+
+    <div id="footer" style="display: none;">
+        __FOOTER__
+    </div>
+    <!--THIS COPYRIGHT NOTICE MUST BE DISPLAYED AS A CONDITION OF THE LICENCE GRANT FOR THIS SOFTWARE. ALL DERIVATEIVES WORKS MUST CARRY THIS NOTICE -->
+</body>
+
+<script>
+	function getQRZImage(callsign, callback) {
+		const no_image_link = "https://s3.amazonaws.com/files.qrz.com/static/qrz/qrz_com200x150.jpg"
+		let cacheItem = urlCache[callsign]
+
+		if (cacheItem != null) {
+			callback(cacheItem)
+		} else {
+			const proxyurl = "http://" + document.location.hostname + ":" + document.location.port + "/";
+			const url = "https://www.qrz.com/lookup/"
+
+			fetch(proxyurl + url + callsign).then((response) => {
+				return response.text()
+			}).then((contents) => {
+				let link = no_image_link
+				let start = contents.indexOf("<td id=\"ppic\"")
+				if (start > 0) {
+					let linkStart = contents.indexOf("src=", start) + 5
+					let linkEnd = contents.indexOf("\"", linkStart)
+					let alink = contents.slice(linkStart, linkEnd)
+					if (alink.startsWith("http") == true) {
+						link = alink
+					} else {
+						log("image link not found in response")
+					}
+				};
+
+				urlCache[callsign] = link
+				callback(link)
+
+			}).catch(() => {
+				log("Can’t access " + url + " response. Blocked by browser?")
+				urlCache[callsign] = no_image_link
+				callback(no_image_link)
+			})
+		}
+	}
+
+	function followUpdUser(talker) {
+		$("#followup tr").remove()
+
+		var content = ""
+
+        for(let i=0; i<traffic.length; i++) {
+            let client = traffic[i]
+			if (client._callsign.startsWith(talker)) {
+                for(let j=0; j<client._history.length; j++) {
+                    content += '<tr><td>' + client._history[j] + '</td></tr>'
+                }
+                break
+			}
+		}
+
+		// getQRZImage(talker, (link) => {
+		// 	$("#followup").append("<tr class='" + "" + "'><td colspan='6' class='fuimg'><a target='_blank' href=https://qrz.com/db/" + talker + "><img style='height: 3rem;width: auto;' src='" + link + "'></a></td></tr>")
+		// 	$("#followup").append(content);
+		// 	$("#followUpModal").show();
+		// })
+
+        $("#followup").append(content);
+        $("#followUpModal").show();
+	}
+
+	function followupcallsign() {
+		var val = $('#search').val();
+
+		$("#inputModal").hide();
+
+		if (val != "")
+			followUpdUser(val.toUpperCase());
+	}
+
+    function log(msg) {
+        console.log(msg);
+    }
+
+    /**
+     * get date in dd.mm.yyyy hh:mm:ss format
+     */
+    function getDateNow() {
+        let d = new Date()
+        return `${d.getDate()}.${d.getMonth()+1}.${d.getFullYear()} ${d.toLocaleTimeString('FR', {hour12: false})}`
+    }
+
+    function parseDateFR(d) {
+        return new Date(parseInt(d.substring(6, 10)), parseInt(d.substring(3, 5))-1, parseInt(d.substring(0, 2)), parseInt(d.substring(11, 13)), parseInt(d.substring(14, 16)), parseInt(d.substring(17, 19)))
+    }
+
+    function secondsBetweenDates(start, stop) {
+        var date2 = parseDateFR(stop)
+        var date1 = parseDateFR(start)
+        var diff = (date2.getTime() - date1.getTime()) / 1000
+        return Math.floor(diff)
+    }
+
+    function decomposeSeconds(start, stop) {
+        const secondsInMinute = 60
+        const secondsInHour = 60 * secondsInMinute
+        const secondsInDay = 24 * secondsInHour
+        const secondsInWeek = 7 * secondsInDay
+
+        let seconds = secondsBetweenDates(start, stop)
+
+        const weeks = Math.floor(seconds / secondsInWeek)
+        const remainingSecondsAfterWeeks = seconds % secondsInWeek
+
+        const days = Math.floor(remainingSecondsAfterWeeks / secondsInDay)
+        const remainingSecondsAfterDays = remainingSecondsAfterWeeks % secondsInDay
+
+        const hours = Math.floor(remainingSecondsAfterDays / secondsInHour)
+        const remainingSecondsAfterHours = remainingSecondsAfterDays % secondsInHour
+
+        const minutes = Math.floor(remainingSecondsAfterHours / secondsInMinute)
+        const remainingSeconds = remainingSecondsAfterHours % secondsInMinute
+
+        result = ''
+
+        if (weeks > 0)
+            result += `${weeks}w `
+
+        if (days)
+            result += `${days}d `
+
+        result += `${hours}:${minutes}:${remainingSeconds}`
+
+        return result
+    }
+
+    var traffic = [];
+
+    /*
+        switch (record.ONLINE) {
+            case 0: content += "<td class='tdOrder'>🔴</td>"; break;
+            case 1: content += "<td class='tdOrder'>🟢</td>"; break;
+            case 2: content += "<td class='tdOrder'>🟠</td>"; break;
+            case 3: content += "<td class='tdOrder'>⚪</td>"; break;
+        }
+    */
+
+    function doTraffic(jsondata) {
+        let record = null
+        let content = ""
+
+        traffic = jsondata
+
+        for (let i = 0; i < traffic.length; i++) {
+            record = traffic[i]
+
+            // log(record._line)
+
+            let index = record._callsign.indexOf('-')
+            let talker = index == -1 ? record._callsign : record._callsign.substring(0, index)
+
+            var flagUrl = getFlag(talker)
+            if (flagUrl == "")
+                flagUrl = flag64["shield"]
+
+            content += "<div class='card'>"
+                content += `<div class="firstGroup">`
+                    // content += `<div class='fuimg'><a target='_blank' href='https://qrz.com/db/${talker}'><img id='qrz${talker}' src='https://s3.amazonaws.com/files.qrz.com/static/qrz/qrz_com200x150.jpg'></a></div>`
+                    
+                    content += `<div class='fuimg'><a target='_blank' href='https://qrz.com/db/${talker}'><i class="fa-regular fa-circle-user"></i></a></div>`
+                    content += `<img class='callsignflag' src='${flagUrl}'/>`
+                    content += `<div class='callsign'>${record._callsign}</div>`
+
+                    // getQRZImage(talker, (link) => {
+                    //     $(`#qrz${talker}`).attr('src', `${link}`)
+                    // })
+
+                    content += `<div class='transmit'><div class='chapter'>last xmit:</div><div class='parameter'>${record._start.length ? record._start: 'n/a'}&nbsp;</div>`
+
+                    if (record._stop.length == 0) { // still online
+                        addTicker(record)
+                        content += `<div class='chapter'>duration:</div><div class='ticker ticker${record._callsign}'>n/a</div>`
+                    }
+                    else {
+                        deleteTicker(record)
+                        try {
+                            content += `<div class='chapter'>duration:</div> ${secondsBetweenDates(record._start, record._stop)}s`
+                        }
+                        catch(e) {
+                            log(e)
+                        }
+                    }
+                    content += `</div>`
+
+                    content += `<div class='monitoring'><div class='chapter'>monitoring:</div> ${record._monitoring.length ? record._monitoring.toString() : 'none'}, <div class='chapter'>selected:</div> ${record._current < 1 ? 'default' : record._current}</div>`
+                content += `</div>`
+
+                content += `<div class="secondGroup"><div class="hotspot">Hotspot</div>`
+                    content += `<div class='address'><div class='chapter'>ip address:</div> ${record._ip}:${record._port}</div>`
+                    content += `<div class='loggedon'><div class='chapter'>logged on:</div> ${record._connected} using <div class='chapter'>protocol</div>&nbsp;v${record._protocol}</div>`
+                    if (record._disconnected.length == 0) { // still online 
+                        content += `<div class='loggedoff'><div class='chapter'>online since:</div>🟢 ${decomposeSeconds(record._connected, getDateNow())}</div>`
+                        content += `<div class='reason ellipsis'><div class='chapter'>status:</div>${record._reason}</div>`
+                    }
+                    else {
+                        content += `<div class='loggedoff'><div class='chapter'>logged off:</div>⚪ ${record._disconnected}</div>`
+                        content += `<div class='reason ellipsis'><div class='chapter'>reason:</div> ${record._reason}</div>`
+                    }
+                content += "</div>"
+            content += "</div>"
+        }
+
+        $("#insertpoint").empty()
+        $("#insertpoint").append(content)
+    }
+
+	function checkDeadTicker() {
+		if (ticker != null) {
+			for (let i = tickerCallsign.length - 1; i >= 0; i--) {
+				if (tickerCallsign[i].delay > startTot) {
+					tickerCallsign.splice(i, 1);
+				}
+			}
+		}
+	}
+
+	function deleteTicker(record) {
+		if (ticker != null) {
+			for (let i = 0; i < tickerCallsign.length; i++) {
+				if (tickerCallsign[i].callsign == record._callsign) {
+					tickerCallsign.splice(i, 1);
+					break;
+				}
+			}
+		}
+	}
+
+	function addTicker(record) {
+		if (ticker != null) {
+			var found = false;
+
+			for (let i = 0; i < tickerCallsign.length; i++) {
+				if (found = (tickerCallsign[i].callsign == record._callsign))
+					break;
+			}
+
+			if (!found) {
+				try {
+                    if (record._start.length > 0) {
+                        var time1 = record._start.substring(11).split(":")
+                        var time2 = new Date()
+                        var delay = Math.max(0, (time2.getMinutes() * 60 + time2.getSeconds()) - (parseInt(time1[1]) * 60 + parseInt(time1[2])))
+
+                        tickerCallsign.push({ "callsign": record._callsign, "delay": delay })
+                    }
+				}
+				catch (e) {
+					log("xxxx " +  record._stop.substring(11))
+				}
+			}
+		}
+	}
+
+    $(document).ready(() => {
+        TIME_INTERVALS = 24
+
+        // document ready occurs before windows.onLoad
+        if (getConfigFromLocalStorage != null) {
+            getConfigFromLocalStorage();
+
+            if (document.documentElement.className != settings[0].config.theme)
+                document.documentElement.className = settings[0].config.theme;
+        }
+
+        document.cookie = "SameSite=None; Secure"
+
+		$(document).on("click", ".close", function () {
+			$("#followUpModal").hide();
+		})
+
+        initMenubar();
+    })
+
+    window.onload = () => {
+        // get browser language
+        lang = navigator.language.split('-')[0]
+
+        urlCache = {}
+        startTot = parseInt("__START_TOT__");
+        if (startTot == 0) startTot = 240;
+        bannerDelay = parseInt("__BANNER_DELAY__");
+        mobileDevice = "__MOBILE__" == "true";
+
+        ticker = null;
+        tickerCallsign = [];
+        statusCountdown = 0
+
+        listeners = 0;
+
+        var wsuri = "ws://" + window.location.hostname + ":__SOCKET_SERVER_PORT__?page=dashboard";
+
+        document.getElementById("menuSearch").style.display = "inline-block";
+
+		// don't show banner if already done within 3600s
+		if (bannerDelay == 0 || (settings[0].config.last != 0 && ((Date.now() - settings[0].config.last) / 1000) < 3600)) {
+			$("#menubar").show();
+			$("#siteHeader").show();
+			$("#footer").show()
+		}
+		else {
+			$("#sitelogo").show();
+
+			setTimeout(() => {
+				$("#sitelogo").hide()
+
+				$("#menubar").show()
+				$("#siteHeader").show()
+				$("#footer").show()
+
+				// reset settings timer 
+				saveSettings();
+			}, bannerDelay);
+		}
+
+        function WSConnection() {
+            'use strict';
+            this.socket = {};
+        }
+
+        WSConnection.prototype.connect = (url) => {
+            'use strict';
+
+            return new Promise((resolve, reject) => {
+                if ("WebSocket" in window)
+                    this.socket = new WebSocket(url);
+                else
+                    if ("MozWebSocket" in window)
+                        this.socket = new MozWebSocket(url);
+                    else {
+                        log("Browser does not support WebSocket!");
+                        resolve();
+                    }
+
+                this.socket.onopen = () => {
+                    log("Connected to " + url)
+
+                    ticker = setInterval(() => {
+                        // Update the time every second
+                        // updateTime();
+
+                        for (let i = 0; i < tickerCallsign.length; i++) {
+                            tickerCallsign[i].delay++
+
+                            var elements = document.getElementsByClassName("ticker" + tickerCallsign[i].callsign)
+                            if (elements != null && elements.length > 0) {
+                                var value = new Date(tickerCallsign[i].delay * 1000).toISOString().slice(14, 19)
+
+                                for (let j = 0; j < elements.length; j++) {
+                                    elements[j].innerHTML = value
+                                }
+                            }
+                        }
+                    }, 1000)
+
+                    resolve()
+                }
+
+                this.socket.onmessage = (e) => {
+                    var data = null;
+
+                    try {
+                        if (themeSettings == "auto")
+                            adjustTheme();
+
+                        data = JSON.parse(e.data);
+
+                        if (data != null) {
+                            if (data.BIGEARS)
+                                $("#btnlisteners").text(data.BIGEARS);
+
+                            // FIRST PACKET IS CONFIG
+                            if (data.CONFIG) {
+                                if (data.CONFIG.BIGEARS) {
+                                    $("#btnlisteners").text(data.CONFIG.BIGEARS)
+                                }
+
+                                if (data.CONFIG.PACKETS)
+                                    doTraffic(data.CONFIG.PACKETS.TRAFFIC)
+                            } else {
+                                if (data.TRAFFIC)
+                                    doTraffic(data.TRAFFIC)
+
+                                if (data.STATUS)
+                                    log(data.STATUS)
+                            }
+                        }
+                    } catch (error) {
+                        log(error)
+                    }
+                };
+
+                socket.onerror = function (error) {
+                    log('WebSocket error: ' + error)
+                    reject(error)
+                }
+
+                socket.onclose = function (e) {
+                    log("Connection closed (wasClean = " + e.wasClean + ", code = " + e.code +
+                        ", reason = '" + e.reason + "')")
+
+                    if (ticker != null) {
+                        clearInterval(ticker)
+                        ticker = null
+                    }
+
+                    this.sock = null
+                }
+            })
+        }
+
+        WSConnection.prototype.disconnect = () => {
+            'use strict'
+            log("Disconnect request from local app layer")
+            this.socket.close()
+        }
+
+        setTimeout(() => {
+            socket = new WSConnection().connect(wsuri)
+        }, 250)
+    }
+
+    window.onunload = () => {
+        socket = null;
+    }
+</script>
+
+</html>

@@ -1,0 +1,347 @@
+a::-webkit-scrollbar,
+select::-webkit-scrollbar {
+  display: none;
+}
+
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@font-face {
+  font-family: GothamPro;
+  src: url(GothamPro-LightItalic.woff2) format("woff2");
+  font-weight: 100;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: GothamPro;
+  src: url(GothamPro.woff2) format("woff2");
+  font-weight: 200;
+  font-style: normal;
+}
+
+:root {
+  --width-card-big: 31rem;
+  --height-card-big: 12.5rem;
+  --width-three-big-cards: calc(var(--width-card-big) *  3);
+
+  --width-card-small: 31rem;
+  --height-card-small: 5.25rem;
+  --transition-delay: 0.6s;
+
+  --sitelogo-posX: 50%;
+  --sitelogo-posY: 45%;
+  --sitelogo-height: 16rem;
+}
+
+.theme-light {
+  --font-family: GothamPro;
+  
+  --clr-page-foreground: #050505;
+  --clr-page-background: #d5d5d5;
+
+  --clr-even-background: #d5d5d5;
+  --clr-odd-background: #f5f5f5;
+
+  --clr-card-foreground: #151515;
+  --clr-card-background: #f5f5f5;
+
+  --clr-online-foreground: #be3a1f;
+
+  /* a */
+  --clr-alink: #004bbb;
+  --clr-avisited: #004bbb;
+  --clr-ahover: hotpink;
+  --clr-aactive: #004bbb;
+  
+  /* menubar */
+  --clr-menubar-foreground: #f5f5f5;
+  --clr-menubar-background: #050505;
+  --clr-menubar-hover: #d0d0d0;
+  --clr-menubar-border: #505050;
+  --clr-menubar-zoombackground: rgba(92, 113, 251, 0.2);
+  --clr-menubar-dropdown-foreground: #050505;
+  --clr-menubar-dropdown-hover: #525252;
+  --clr-menubar-dropdown-content: #a1a1a1;
+}
+
+.theme-dark {
+  --font-family: GothamPro;
+
+  --clr-page-foreground: #f5f5f5;
+  --clr-page-background: #050505;
+  
+  --clr-even-background: #505050;
+  --clr-odd-background: #808080;
+
+  --clr-card-foreground: #f5f5f5;
+  --clr-card-background: #151515;
+  
+  --clr-online-foreground: #be3a1f;
+
+  /* a */
+  --clr-alink: #a8d8ff;
+  --clr-avisited: #a8d8ff;
+  --clr-ahover: rgb(248, 191, 219);
+  --clr-aactive: #a8d8ff;
+
+  /* menubar */
+  --clr-menubar-foreground: #ffffff;
+  --clr-menubar-background: #050505;
+  --clr-menubar-border: #505050;
+  --clr-menubar-hover: #505050;  
+  --clr-menubar-zoombackground: rgba(255, 128, 39, 0.4);  
+  --clr-menubar-dropdown-foreground: #f5f5f5;
+  --clr-menubar-dropdown-hover: #525252;
+  --clr-menubar-dropdown-content: #a1a1a1;
+}
+
+a:link, .alink {
+  color: var(--clr-alink);
+  text-decoration: none;
+  cursor: pointer;
+}
+/* visited link */
+a:visited {
+  color: var(--clr-avisited);
+  text-decoration: none;
+}
+/* mouse over link */
+a:hover, .alink:hover {
+  color: var(--clr-ahover);
+  text-decoration: underline;
+}
+/* selected link */
+a:active, .alink:active {
+  color: var(--clr-aactive);
+  text-decoration: none;
+}
+
+html,
+body {
+  color: var(--clr-page-foreground);
+  background-color: var(--clr-page-background);
+  font-size: 0.9rem;
+  font-weight: 100;
+  font-family: var(--font-family);
+}
+
+.tablefixed {
+  table-layout: fixed;
+}
+
+.cardcontainer {
+  container-name: cardcontainer;
+  container-type: inline-size;
+
+  display: grid;
+  background-color: var(--clr-page-background);
+  grid-template-columns: repeat(auto-fit, var(--width-card-big));
+  grid-gap: 0.5rem;
+}
+
+.card {
+  border-radius: 8px;
+  border: 2px solid var(--clr-card-foreground);
+  background-color: var(--clr-card-background);
+  transition: height var(--transition-delay) ease-in-out;
+}
+
+.callsignflag {
+  padding: 0.25rem 0 0 0.25rem;
+  width: auto;
+  height: 1.4rem;
+}
+
+.callsign {
+  display: inline-block;
+  color: var(--clr-card-foreground);
+  font-size: 1.8rem;
+  margin: 0 0 0 0.25rem;
+  font-weight: bold;
+}
+
+.hotspot {
+  color: var(--clr-card-foreground);
+  font-size: 1.1rem;
+  margin: 0.25rem;
+  font-weight: bold;
+}
+
+.loggedon,
+.loggedoff,
+.protocol,
+.address,
+.transmit,
+.delay,
+.monitoring,
+.current,
+.reason {
+  color: var(--clr-card-foreground);
+  margin: 0.25rem;  
+}
+
+.ticker {
+  color: var(--clr-online-foreground);
+  display: inline-block;
+  margin: 0.25rem;
+  font-weight: bold;
+}
+
+.chapter {
+  display: inline-block;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.parameter {
+  display: inline-block;
+  margin-left: 1rem;
+}
+
+.firstGroup {
+  margin-bottom: 1rem;
+}
+
+.fuimg {
+  float: right;
+  margin: 0.4rem 0.4rem 0 0;
+}
+
+.fuimg img {
+  cursor: pointer;  
+  height: 4rem;
+  width: auto;
+  border-radius: 8px;
+  border: 2px solid var(--clr-page-foreground);
+}
+
+.fuimg i {
+  color: var(--clr-page-foreground);
+  font-size: 2rem;
+}
+
+.fuimg i:hover {
+  color: #abacfa;
+}
+
+@container cardcontainer (width > 93rem) {
+  .cardcontainer {
+    grid-template-columns: repeat(auto-fit, var(--width-card-big));
+  }
+
+  .card {
+    height: var(--height-card-big);
+    overflow: hidden;
+  }
+}
+
+@container cardcontainer (width < 93rem) {
+  .cardcontainer {
+    grid-template-columns: repeat(auto-fit, var(--width-card-small));
+  }
+
+  .card {
+    height: var(--height-card-small);
+    overflow: hidden;
+  }
+}
+
+/***************************************************************/
+#footer {
+  margin-top: 2rem;
+  padding-bottom: 0.5rem;
+  color:var(--color-footer);
+  font-size: 0.8rem; 
+  font-weight:normal; 
+  text-align: center;
+  width: 99%;
+  bottom: 0;
+  position:absolute;
+}
+
+/****************************************************************/
+/* modal */
+/* The Modal (background) */
+/* The Close Button */
+.close {
+  position:absolute;
+  color: var(--color-close);
+  top: -0.5rem;
+  right: 25px;
+  font-size: 28px;
+  font-weight: normal;
+}
+
+.close:hover, .close:focus {
+  color: var(--color-close);
+  text-decoration: none;
+  cursor: default;
+}
+
+.close-followup {
+  top: -4px;
+  right: 10px;
+}
+
+.modal {  
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1000; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
+
+  scrollbar-width: thin;
+}
+
+.modal-content-followup::-webkit-scrollbar {
+    display: block;
+    width: 6px;
+    background-color: #404040;
+}
+
+.modal-content-followup::-webkit-scrollbar-thumb {
+    background-color: #569cd6;
+}
+
+.modal-content-followup {
+  scrollbar-width: thin;
+
+  /* top: 50%;
+  left: 55%;
+  transform: translateY(-50%); */
+
+  max-height: 30rem;
+  overflow-y: auto;
+
+  border: 2px solid var(--clr-card-foreground);
+  border-radius: 8px;
+  width: fit-content;  
+  color: var(--clr-card-foreground);
+  background-color: var(--clr-card-background);
+
+  position: absolute;
+  top: 20%;
+  left: 31%;
+  margin-top: 0px;
+  margin-left: 0px;
+}
+
+.modal-content-followup table {
+  margin: 0.2rem;
+}
+
+#followup tr:nth-child(odd) {
+  background-color: var(--clr-odd-foreground);
+}
+#followup tr:nth-child(even) {
+  background-color: var(--clr-even-background);
+}
