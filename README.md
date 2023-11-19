@@ -1,5 +1,5 @@
 # svxmonitor cards
-** svxmonitor v2 is a NODEJS micro service providing JSON data from SVXLink **
+** svxmonitor v2 is a NODEJS dashboard for SVXLink **
     
     - almost not templated, easily editable
 
