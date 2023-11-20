@@ -329,20 +329,21 @@
         lang = navigator.language.split('-')[0]
 
         urlCache = {}
-        startTot = parseInt("__START_TOT__");
-        if (startTot == 0) startTot = 240;
-        bannerDelay = parseInt("__BANNER_DELAY__");
-        mobileDevice = "__MOBILE__" == "true";
+        startTot = parseInt("__START_TOT__")
+        if (startTot == 0) startTot = 240
+        bannerDelay = parseInt("__BANNER_DELAY__")
+        mobileDevice = "__MOBILE__" == "true"
 
-        ticker = null;
-        tickerCallsign = [];
+        ticker = null
+        tickerCallsign = []
+        cardsSmall = false
         statusCountdown = 0
 
-        listeners = 0;
+        listeners = 0
 
-        var wsuri = "ws://" + window.location.hostname + ":__SOCKET_SERVER_PORT__?page=dashboard";
+        var wsuri = "ws://" + window.location.hostname + ":__SOCKET_SERVER_PORT__?page=dashboard"
 
-        document.getElementById("menuSearch").style.display = "inline-block";
+        document.getElementById("menuSearch").style.display = "inline-block"
 
 		// don't show banner if already done within 3600s
 		if (bannerDelay == 0 || (settings[0].config.last != 0 && ((Date.now() - settings[0].config.last) / 1000) < 3600)) {

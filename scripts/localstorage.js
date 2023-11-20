@@ -19,9 +19,10 @@
 
 cookieSettingsName = window.location.hostname+"_svxmoncards_settings"
 settingsValidity = 5	    // 5 days
-settings = [ { config: { "theme": "theme-dark" } }, { "map": { "zoom" : 6.5 } }, { "open": true } ];
+settings = [ { config: { "theme": "theme-dark", "last": Date.now(), "zoom": 0, "sizeValue": 0 } } ];
 
 var zoomValue = 1
+var sizeValue = 0
 
 var names = []    
 
@@ -120,6 +121,19 @@ String.prototype.capitalize = function (lower) {
     })
 }
 
+function cardSize(v) {
+    var r = document.querySelector(':root');
+    sizeValue = v;
+
+    switch(v) {
+        case 0: r.style.setProperty('--card-size', 'blue'); break;
+        case 1: r.style.setProperty('--card-size', 'white'); break;
+        case 2: r.style.setProperty('--card-size', 'red'); break;
+    }
+
+    saveSettings()
+}
+
 function zoom(v) {
 	switch(v) {
 		case -1: zoomValue -= 0.10; break
@@ -176,7 +190,7 @@ function saveSettings() {
     themeSettings = document.documentElement.className
 
     settings = [
-        { "config": { "theme": themeSettings, "last": Date.now() } }
+        { "config": { "theme": themeSettings, "last": Date.now(), "sizeValue": sizeValue } }
     ]
     
     createCookie(cookieSettingsName, JSON.stringify(settings), settingsValidity)
@@ -207,22 +221,16 @@ function applyConfig() {
 
         if (tbs.config) {
             themeSettings = tbs.config.theme
-            if (hideAllTG = tbs.config.hidetg)
-			    $("#insertPoint").hide()
-		    else
-			    $("#insertPoint").show()
-    
             if (themeSettings == "auto")
                 adjustTheme()
             else
                 document.documentElement.className = themeSettings
+
+            if (tbs.config.sizeValue) {
+                sizeValue = tbs.config.sizeValue
+                cardSize(sizeValue)
+            }
         }
-        else if (tbs.map)
-            currentZoom = tbs.map.zoom
-        else if (tbs.open)
-            $("#"+tbs.name).show()
-        else
-            $("#"+tbs.name).hide()
     }
 }
 

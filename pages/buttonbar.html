@@ -41,10 +41,9 @@
       
     <li><a href="#" title="Theme"><i class="fas fa-moon"></i></a>
       <ul>
-        <li><a href="#" onclick="javascript:document.documentElement.className = 'theme-dark';">Dark</a></li>
-        <li><a href="#" onclick="javascript:document.documentElement.className = 'theme-light';">Light</a></li>
-        <li><a href="#" onclick="javascript:themeSettings='auto';adjustTheme()">Auto</a></li>
-        <li><a href="#" onclick="javascript:saveSettings()">Save</a></li>
+        <li><a href="#" onclick="javascript:document.documentElement.className = 'theme-dark';saveSettings();">Dark</a></li>
+        <li><a href="#" onclick="javascript:document.documentElement.className = 'theme-light';saveSettings();">Light</a></li>
+        <li><a href="#" onclick="javascript:themeSettings='auto';adjustTheme();saveSettings();">Auto</a></li>
       </ul>
     </li>
       
@@ -57,6 +56,14 @@
         <input type="search" id="search" name="search" placeholder="CALLSIGN" autocomplete="off">
         <button title="Search your contact" type="button" id="searchbutton" class="search-btn fas fa-search" onclick="followupcallsign()"></button>
       </div>
+    </li>
+    
+    <li><a href="#" title="Options"><i class="fa-solid fa-bars"></i></a>
+      <ul>
+        <li><a href="#" onclick="cardSize(0)">Small cards</a></li>
+        <li><a href="#" onclick="cardSize(1)">Big cards</a></li>
+        <li><a href="#" onclick="cardSize(2)">Auto</a></li>
+      </ul>
     </li>
   </ul>
 </div>

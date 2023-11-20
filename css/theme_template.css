@@ -35,6 +35,8 @@ select::-webkit-scrollbar {
   --sitelogo-posX: 50%;
   --sitelogo-posY: 45%;
   --sitelogo-height: 16rem;
+
+  --card-size: blue;
 }
 
 .theme-light {
@@ -58,12 +60,12 @@ select::-webkit-scrollbar {
   --clr-aactive: #004bbb;
   
   /* menubar */
-  --clr-menubar-foreground: #f5f5f5;
+  --clr-menubar-foreground: #ffffff;
   --clr-menubar-background: #050505;
-  --clr-menubar-hover: #d0d0d0;
   --clr-menubar-border: #505050;
-  --clr-menubar-zoombackground: rgba(92, 113, 251, 0.2);
-  --clr-menubar-dropdown-foreground: #050505;
+  --clr-menubar-hover: #505050;  
+  --clr-menubar-zoombackground: rgba(255, 128, 39, 0.4);  
+  --clr-menubar-dropdown-foreground: #f5f5f5;
   --clr-menubar-dropdown-hover: #525252;
   --clr-menubar-dropdown-content: #a1a1a1;
 }
@@ -140,7 +142,7 @@ body {
   display: grid;
   background-color: var(--clr-page-background);
   grid-template-columns: repeat(auto-fit, var(--width-card-big));
-  grid-gap: 0.5rem;
+  grid-gap: 0.55rem;
 }
 
 .card {
@@ -228,7 +230,7 @@ body {
   color: #abacfa;
 }
 
-@container cardcontainer (width > 93rem) {
+@container cardcontainer ((width > 93rem) and style(--card-size:red)) or style(--card-size:white) {
   .cardcontainer {
     grid-template-columns: repeat(auto-fit, var(--width-card-big));
   }
@@ -239,7 +241,7 @@ body {
   }
 }
 
-@container cardcontainer (width < 93rem) {
+@container cardcontainer ((width < 93rem) and style(--card-size:red)) or style(--card-size:blue) {
   .cardcontainer {
     grid-template-columns: repeat(auto-fit, var(--width-card-small));
   }
