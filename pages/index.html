@@ -27,7 +27,10 @@
                 <table class="tablefixed">
                     <thead id="theadFollowUp" tbodyid="followup">
                         <tr class="headerRow">
-                            <th class="thlelog">History</th>
+                            <th class="thdate">Date</th>
+                            <th class="thtime">Time</th>
+                            <th class="thcallsign">Callsign</th>
+                            <th class="thtraffic">Traffic</th>
                         </tr>
                     </thead>
                     <tbody id="followup">
@@ -87,6 +90,9 @@
 		}
 	}
 
+    /**
+     * 15.11.2023 20:45:04: F5ZXD-R: Talker stop on TG #33
+     */
 	function followUpdUser(talker) {
 		$("#followup tr").remove()
 
@@ -96,7 +102,10 @@
             let client = traffic[i]
 			if (client._callsign.startsWith(talker)) {
                 for(let j=0; j<client._history.length; j++) {
-                    content += '<tr><td>' + client._history[j] + '</td></tr>'
+                    let f = client._history[j].split('Talker stop on')
+                    let d = f[0].split(' ')
+
+                    content += `<tr><td>${d[0]}</td><td>${d[1].slice(0, -1)}</td><td>${d[2].slice(0, -1)}</td><td class='tdtraffic'>${f[1].trim()}</td></tr>`
                 }
                 break
 			}

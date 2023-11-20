@@ -230,6 +230,13 @@ body {
   color: #abacfa;
 }
 
+.thtraffic { 
+  width: 8rem;
+}
+.tdtraffic {
+  padding-left: 0.25rem;
+}
+
 @container cardcontainer ((width > 93rem) and style(--card-size:red)) or style(--card-size:white) {
   .cardcontainer {
     grid-template-columns: repeat(auto-fit, var(--width-card-big));
