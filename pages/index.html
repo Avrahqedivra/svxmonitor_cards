@@ -248,7 +248,7 @@
                 content += `</div>`
 
                 content += `<div class="secondGroup"><div class="hotspot">Hotspot</div>`
-                    content += `<div class='address'><div class='chapter'>ip address:</div> ${record._ip}:${record._port}</div>`
+                    content += `<div class='address'><div class='chapter'>ip address:</div> ${record._ip}<div class='chapter2'>port:</div> ${record._port}</div>`
                     content += `<div class='loggedon'><div class='chapter'>logged on:</div> ${record._connected} using <div class='chapter'>protocol</div>&nbsp;v${record._protocol}</div>`
                     if (record._disconnected.length == 0) { // still online 
                         content += `<div class='loggedoff'><div class='chapter'>online since:</div>🟢 ${decomposeSeconds(record._connected, getDateNow())}</div>`
