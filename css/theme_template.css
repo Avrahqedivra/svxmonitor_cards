@@ -190,7 +190,6 @@ body {
 .ticker {
   color: var(--clr-online-foreground);
   display: inline-block;
-  margin: 0.25rem;
   font-weight: bold;
 }
 
