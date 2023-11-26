@@ -12,7 +12,7 @@
     
     cd /opt
     git clone https://github.com/Avrahqedivra/svxmonitor_cards.git
-    cd ndmonitor
+    cd svxmonitor_cards
 
     to install needed packages : 
     
@@ -29,7 +29,7 @@
     
     build the transpiled files with: 
         
-        return to the ndmonitor main folder
+        return to the svxmonitor_cards main folder
 
         npm run build
 
