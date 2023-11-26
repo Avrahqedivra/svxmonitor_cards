@@ -482,23 +482,27 @@ class Monitor {
 
       const fileStream = fs.createReadStream(filepath)
 
-      // Send the JSON file in chunks
-      let isFirstChunk = true
-      fileStream.on('data', (chunk) => {
-        // Send the chunk to the response
-        res.write(chunk)
-      })
+      if (fileStream != null) {
+        // Send the JSON file in chunks
+        let isFirstChunk = true
+        fileStream.on('data', (chunk) => {
+          // Send the chunk to the response
+          res.write(chunk)        
+        })
 
-      fileStream.on('end', () => {
-        res.end()
-      })
+        fileStream.on('end', () => {
+          res.end()
+        })
 
-      // Handle any errors that might occur during streaming
-      fileStream.on('error', (err) => {
-        logger.error(`Error reading the file: ${err}`)
-        res.statusCode = 500
-        res.end('Internal Server Error')
-      })
+        // Handle any errors that might occur during streaming
+        fileStream.on('error', (err) => {
+          logger.error(`Error reading the file: ${err}`)
+          res.statusCode = 500
+          res.end('Internal Server Error')
+        })
+
+        fileStream.destroy()
+      }
 
       return
     }
