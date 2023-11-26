@@ -49,7 +49,7 @@ let dashboard_server: WebSocketServer = null
 // system variables
 const extensions: string[] = ['.ico', '.jpg', '.png', '.gif', '.svg', '.css', '.js', '.mp3', '.mp4', '.webm', '.mpeg', '.ogg', '.ppt', '.pptx', '.woff2']
 
-export let __version__: string          = "2.0.0"
+export let __version__: string          = "2.1.0"
 export let __sessions__: any[]          = []
 export let __mobilePhone__: boolean     = false
 
@@ -684,15 +684,15 @@ class Monitor {
      */ 
     logger.info(`${globals.__CLEAR__}${globals.__HOME__}`)
 
-    logger.info(`${globals.__BLUE__}     .dMMMb  dMP dMP dMP dMP     ${globals.__WHITE__}dMMMMMMMMb  .aMMMb  dMMMMb  dMP ${globals.__RED__}dMMMMMMP .aMMMb  dMMMMb`)
-    logger.info(`${globals.__BLUE__}    dMP" VP dMP dMP dMK.dMP     ${globals.__WHITE__}dMP"dMP"dMP dMP"dMP dMP dMP amr ${globals.__RED__}   dMP   dMP"dMP dMP.dMP`)
-    logger.info(`${globals.__BLUE__}    VMMMb  dMP dMP .dMMMK"     ${globals.__WHITE__}dMP dMP dMP dMP dMP dMP dMP dMP ${globals.__RED__}   dMP   dMP dMP dMMMMK"`)
-    logger.info(`${globals.__BLUE__}  dP .dMP  YMvAP" dMP"AMF     ${globals.__WHITE__}dMP dMP dMP dMP.aMP dMP dMP dMP ${globals.__RED__}   dMP   dMP.aMP dMP"AMF`)
-    logger.info(`${globals.__BLUE__}  VMMMP"    VP"  dMP dMP     ${globals.__WHITE__}dMP dMP dMP  VMMMP" dMP dMP dMP ${globals.__RED__}   dMP    VMMMP" dMP dMP`) 
+    logger.info(`${globals.__BLUE__}    .dMMMb  dMP dMP dMP dMP ${globals.__WHITE__}dMMMMMMMMb  .aMMMb  dMMMMb  ${globals.__RED__}.aMMMb  .aMMMb  dMMMMb  dMMMMb`)
+    logger.info(`${globals.__BLUE__}   dMP" VP dMP dMP dMK.dMP ${globals.__WHITE__}dMP"dMP"dMP dMP"dMP dMP dMP ${globals.__RED__}dMP"VMP dMP"dMP dMP.dMP dMP VMP`)
+    logger.info(`${globals.__BLUE__}   VMMMb  dMP dMP .dMMMK" ${globals.__WHITE__}dMP dMP dMP dMP dMP dMP dMP ${globals.__RED__}dMP     dMMMMMP dMMMMK" dMP dMP`)
+    logger.info(`${globals.__BLUE__} dP .dMP  YMvAP" dMP"AMF ${globals.__WHITE__}dMP dMP dMP dMP.aMP dMP dMP ${globals.__RED__}dMP.aMP dMP dMP dMP"AMF dMP.aMP`)
+    logger.info(`${globals.__BLUE__} VMMMP"    VP"  dMP dMP ${globals.__WHITE__}dMP dMP dMP  VMMMP" dMP dMP ${globals.__RED__} VMMMP" dMP dMP dMP dMP dMMMMP`)                                                                                     
 
     logger.info(`${globals.__RESET__}`)
     
-    logger.info(`\nSVXMon v${__version__} (c) 2023 Jean-Michel Cohen, F4JDN <f4jdn@outlook.fr>\n`)
+    logger.info(`\nSVXMonitor Cards v${__version__} (c) 2023 Jean-Michel Cohen, F4JDN <f4jdn@outlook.fr>\n`)
 
     /**
      * Download files
