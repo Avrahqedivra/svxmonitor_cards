@@ -32,7 +32,7 @@ export class Utils {
   // LONG VERSION - MAKES A FULL DICTIONARY OF INFORMATION BASED ON TYPE OF ALIAS FILE
   // BASED ON DOWNLOADS FROM RADIOID.NET      
   mk_full_id_dict(_path: string, _file: string, _type: string) {
-    let records = {}
+    let records = []
 
     if (_path.length == 0 || _file.length == 0)
         return records

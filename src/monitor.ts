@@ -699,7 +699,7 @@ class Monitor {
      */
     const downloader = new FileDownloader()
     const envFiles: any[] = [ 
-      { path:  config.__path__, file:  config.__subscriber_file__, url:  config.__subscriber_url__, stale:  config.__file_reload__ * 24 * 3600 }
+      // { path:  config.__path__, file:  config.__subscriber_file__, url:  config.__subscriber_url__, stale:  config.__file_reload__ * 24 * 3600 }
     ]
 
     logger.info('starting files download, be patient, it could take several minutes...')
