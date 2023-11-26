@@ -5,8 +5,8 @@
 
     Prerequisites:
 
-    - nodejs    (as recent as possible)
-    - npm       (as recent as possible)
+    - nodejs    (as recent as possible not less than v18)
+    - npm       (as recent as possible matches nodejs)
 
     must be installed 
     
