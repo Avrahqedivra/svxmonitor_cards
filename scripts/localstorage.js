@@ -215,25 +215,6 @@ function adjustTheme() {
     }
 }
 
-function applyConfig() {
-    for(let i=0; i < settings.length; i++) {
-        var tbs = settings[i]
-
-        if (tbs.config) {
-            themeSettings = tbs.config.theme
-            if (themeSettings == "auto")
-                adjustTheme()
-            else
-                document.documentElement.className = themeSettings
-
-            if (tbs.config.sizeValue) {
-                sizeValue = tbs.config.sizeValue
-                cardSize(sizeValue)
-            }
-        }
-    }
-}
-
 function getConfigFromLocalStorage() {
     map = null
     themeSettings = "theme-dark"
