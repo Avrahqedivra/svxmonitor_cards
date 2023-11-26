@@ -369,12 +369,14 @@ class Monitor {
       /**
        * Client 90.XXX.XXX.96:49376 Authentication failed for user "(33) FXXXX H"
        */
-      if (data.startsWith(CLIENT) && data.indexOf(AUTHFAILED) != -1) {
+      if (data.startsWith(CLIENT) && (tokenIndex = data.indexOf(AUTHFAILED)) != -1) {
         dataTokens = data.split(' ')
         address = dataTokens[1].split(':')
         
-        if ((clientIndex = this.clientFromAddress(address)) != -1)
-          this.clients.splice(clientIndex, 1)
+        if ((clientIndex = this.clientFromAddress(address)) != -1) {
+          this.clients[clientIndex].reason = data.substring(tokenIndex).trim()
+          this.clients[clientIndex].line = this.lineIndex
+        }
 
         continue
       }
