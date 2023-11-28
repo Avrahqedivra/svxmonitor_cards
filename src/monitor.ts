@@ -76,6 +76,7 @@ const TALKERSTOP = 'Talker stop on TG #'
 const FRAMELOST = 'UDP frame(s) lost. Expected'
 const UNKNOWNUSER = '*** WARNING: Unknown user'
 const AUTHFAILED = 'Authentication failed for user'
+const HEARTBEAT = 'TCP heartbeat timeout'
 
 const REFLECTOR = true
 const SVXLINK = false
@@ -200,7 +201,7 @@ class Monitor {
           clientIndex = this.clients.length-1
         }
         
-        this.clients[clientIndex].connected = date        
+        this.clients[clientIndex].connected = date
         this.clients[clientIndex].start = ''
         this.clients[clientIndex].stop = ''
         this.clients[clientIndex].reason = ''
@@ -217,6 +218,32 @@ class Monitor {
         
         if ((clientIndex = this.clientFromAddress(address)) != -1)
           this.clients.splice(clientIndex, 1)
+
+        continue
+      }
+
+      /**
+       * FXXXX-R: disconnected: .... reason ...
+       */
+      if (!data.startsWith(CLIENT) && (tokenIndex = data.indexOf(DISCONNECTED)) != -1) {
+        dataTokens = data.split(' ')
+
+        if ((clientIndex = this.clientFromCallsign(dataTokens[0].slice(0, -1))) != -1)
+          this.clients.splice(clientIndex, 1)
+
+        continue
+      }
+
+      /**
+       * 28.11.2023 15:46:59: FXXXX-H: TCP heartbeat timeout
+       */
+      if ((tokenIndex = data.indexOf(HEARTBEAT)) != -1) {
+        dataTokens = data.split(' ')
+
+        if ((clientIndex = this.clientFromCallsign(dataTokens[0].slice(0, -1))) != -1) {
+          this.clients[clientIndex].reason = data.substring(tokenIndex).trim()
+          this.clients[clientIndex].line = this.lineIndex  
+        }
 
         continue
       }
@@ -335,21 +362,6 @@ class Monitor {
 
         if ((clientIndex = this.clientFromCallsign(dataTokens[0].slice(0, -1))) != -1) {
           this.clients[clientIndex].reason = data.substring(dataTokens[0].length).trim()
-          this.clients[clientIndex].line = this.lineIndex
-        }
-
-        continue
-      }
-
-      /**
-       * FXXXX-R: disconnected: .... reason ...
-       */
-      if ((tokenIndex = data.indexOf(DISCONNECTED)) != -1) {
-        dataTokens = data.split(' ')
-
-        if ((clientIndex = this.clientFromCallsign(dataTokens[0].slice(0, -1))) != -1) {
-          this.clients[clientIndex].disconnected = date
-          this.clients[clientIndex].reason = data.substring(tokenIndex+DISCONNECTED.length).trim()
           this.clients[clientIndex].line = this.lineIndex
         }
 
@@ -675,7 +687,7 @@ class Monitor {
     crc16 = new Crc16()
 
     // must be first
-    __footer_html__ = replaceSystemStrings(loadTemplate(`${config.__path__}pages/${config.__footer__}`))        
+    __footer_html__ = replaceSystemStrings(loadTemplate(`${config.__path__}pages/${config.__footer__}`))
     __siteLogo_html__ = replaceSystemStrings(loadTemplate(`${config.__path__}pages/${config.__siteLogo__}`))
     __buttonBar_html__ = replaceSystemStrings(loadTemplate(`${config.__path__}pages/${config.__buttonBar__}`))
 
@@ -688,7 +700,7 @@ class Monitor {
     logger.info(`${globals.__BLUE__}   dMP" VP dMP dMP dMK.dMP ${globals.__WHITE__}dMP"dMP"dMP dMP"dMP dMP dMP ${globals.__RED__}dMP"VMP dMP"dMP dMP.dMP dMP VMP`)
     logger.info(`${globals.__BLUE__}   VMMMb  dMP dMP .dMMMK" ${globals.__WHITE__}dMP dMP dMP dMP dMP dMP dMP ${globals.__RED__}dMP     dMMMMMP dMMMMK" dMP dMP`)
     logger.info(`${globals.__BLUE__} dP .dMP  YMvAP" dMP"AMF ${globals.__WHITE__}dMP dMP dMP dMP.aMP dMP dMP ${globals.__RED__}dMP.aMP dMP dMP dMP"AMF dMP.aMP`)
-    logger.info(`${globals.__BLUE__} VMMMP"    VP"  dMP dMP ${globals.__WHITE__}dMP dMP dMP  VMMMP" dMP dMP ${globals.__RED__} VMMMP" dMP dMP dMP dMP dMMMMP`)                                                                                     
+    logger.info(`${globals.__BLUE__} VMMMP"    VP"  dMP dMP ${globals.__WHITE__}dMP dMP dMP  VMMMP" dMP dMP ${globals.__RED__} VMMMP" dMP dMP dMP dMP dMMMMP`)
 
     logger.info(`${globals.__RESET__}`)
     
