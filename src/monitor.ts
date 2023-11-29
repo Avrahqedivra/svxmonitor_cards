@@ -151,8 +151,14 @@ class Monitor {
 
   clientFromAddress(address: string[]): number {
     for(let i=0; i<this.clients.length; i++) {
-      if (this.clients[i].ip == address[0] && this.clients[i].port == parseInt(address[1]))
-        return i
+      if (this.clients[i].ip === '127.0.0.1' || this.clients[i].ip === '0.0.0.0') {
+        if (this.clients[i].ip == address[0] && this.clients[i].port == parseInt(address[1]))
+          return i
+      }
+      else {
+        if (this.clients[i].ip == address[0])
+          return i
+      }
     }
 
     return -1
@@ -228,11 +234,14 @@ class Monitor {
       if (!data.startsWith(CLIENT) && (tokenIndex = data.indexOf(DISCONNECTED)) != -1) {
         dataTokens = data.split(' ')
 
-        if ((clientIndex = this.clientFromCallsign(dataTokens[0].slice(0, -1))) != -1)
-          this.clients.splice(clientIndex, 1)
+        if ((clientIndex = this.clientFromCallsign(dataTokens[0].slice(0, -1))) != -1) {
+          this.clients[clientIndex].disconnected = date
+          this.clients[clientIndex].reason = data.substring(tokenIndex+DISCONNECTED.length).trim()
+          this.clients[clientIndex].line = this.lineIndex
+        }
 
         continue
-      }
+      }      
 
       /**
        * 28.11.2023 15:46:59: FXXXX-H: TCP heartbeat timeout
