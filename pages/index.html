@@ -4,8 +4,7 @@
 <head>
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="20000" />
-    <title>SVX Monitor</title>
+    <title>SVX Monitor Cards</title>
     <link rel="stylesheet" href="theme_template.css">
     <link rel="stylesheet" href="mysite_template.css">
     <meta name="description" content="Copyright (c) 2023 Jean-Michel Cohen - F4JDN" />
@@ -41,9 +40,11 @@
     </div>
 
     <div id="siteHeader" style="display:none">
-
-        <div id="insertpoint" class="cardcontainer"></div>
-        
+        <div id="insertpoint">
+            <div class="cardtable">
+                <div id="cardcontainer" class="cardcontainer"></div>
+            </div>
+        </div>
     </div>
 
     <div id="footer" style="display: none;">
@@ -215,11 +216,13 @@
             if (flagUrl == "")
                 flagUrl = flag64["shield"]
 
-            content += "<div class='card'>"
-                content += `<div class="firstGroup">`
+            var cardstate = (record._disconnected.length == 0) ? '' : 'disconnected'
+
+            content += `<div id='${record._callsign}' class='card ${cardstate}'>`
+                content += `<div class='firstGroup'>`
                     // content += `<div class='fuimg'><a target='_blank' href='https://qrz.com/db/${talker}'><img id='qrz${talker}' src='https://s3.amazonaws.com/files.qrz.com/static/qrz/qrz_com200x150.jpg'></a></div>`
                     
-                    content += `<div class='fuimg'><a target='_blank' href='https://qrz.com/db/${talker}'><i class="fa-regular fa-circle-user"></i></a></div>`
+                    content += `<div class='fuimg'><a target='_blank' href='https://qrz.com/db/${talker}'><i class='fa-regular fa-circle-user'></i></a></div>`
                     content += `<img class='callsignflag' src='${flagUrl}'/>`
                     content += `<div class='callsign'>${record._callsign}</div>`
 
@@ -247,7 +250,7 @@
                     content += `<div class='monitoring'><div class='chapter'>monitoring:</div> ${record._monitoring.length ? record._monitoring.toString() : 'none'}, <div class='chapter'>selected:</div> ${record._current < 1 ? 'default' : record._current}</div>`
                 content += `</div>`
 
-                content += `<div class="secondGroup"><div class="hotspot">Hotspot</div>`
+                content += `<div class='secondGroup'><div class='hotspot'>Hotspot</div>`
                     content += `<div class='address'><div class='chapter'>ip address:</div> ${record._ip}<div class='chapter2'>port:</div> ${record._port}</div>`
                     content += `<div class='loggedon'><div class='chapter'>logged on:</div> ${record._connected} using <div class='chapter'>protocol</div>&nbsp;v${record._protocol}</div>`
                     if (record._disconnected.length == 0) { // still online 
@@ -262,8 +265,8 @@
             content += "</div>"
         }
 
-        $("#insertpoint").empty()
-        $("#insertpoint").append(content)
+        $("#cardcontainer").empty()
+        $("#cardcontainer").append(content)
     }
 
 	function checkDeadTicker() {

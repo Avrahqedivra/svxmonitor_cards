@@ -26,17 +26,19 @@ select::-webkit-scrollbar {
 :root {
   --width-card-big: 31rem;
   --height-card-big: 12.5rem;
-  --width-three-big-cards: calc(var(--width-card-big) *  3);
 
   --width-card-small: 31rem;
   --height-card-small: 5.25rem;
-  --transition-delay: 0.6s;
+
+  --width-card-xsmall: 13.5rem;
+  --height-card-xsmall: 5.25rem;
 
   --sitelogo-posX: 50%;
   --sitelogo-posY: 45%;
   --sitelogo-height: 16rem;
 
   --card-size: blue;
+  --transition-delay: 0.6s;
 }
 
 .theme-light {
@@ -135,21 +137,28 @@ body {
   table-layout: fixed;
 }
 
-.cardcontainer {
-  container-name: cardcontainer;
+.cardtable {
+  container-name: cardtable;
   container-type: inline-size;
-
-  display: grid;
   background-color: var(--clr-page-background);
+}
+
+.cardcontainer {
+  display: grid;
   grid-template-columns: repeat(auto-fit, var(--width-card-big));
   grid-gap: 0.55rem;
 }
 
 .card {
+  overflow: hidden;
   border-radius: 8px;
   border: 2px solid var(--clr-card-foreground);
   background-color: var(--clr-card-background);
-  transition: height var(--transition-delay) ease-in-out;
+  transition: width var(--transition-delay) ease-in-out, height var(--transition-delay) ease-in-out;
+}
+
+.disconnected {
+  border-style: dashed;
 }
 
 .callsignflag {
@@ -242,28 +251,6 @@ body {
 }
 .tdtraffic {
   padding-left: 0.25rem;
-}
-
-@container cardcontainer ((width > 93rem) and style(--card-size:red)) or style(--card-size:white) {
-  .cardcontainer {
-    grid-template-columns: repeat(auto-fit, var(--width-card-big));
-  }
-
-  .card {
-    height: var(--height-card-big);
-    overflow: hidden;
-  }
-}
-
-@container cardcontainer ((width < 93rem) and style(--card-size:red)) or style(--card-size:blue) {
-  .cardcontainer {
-    grid-template-columns: repeat(auto-fit, var(--width-card-small));
-  }
-
-  .card {
-    height: var(--height-card-small);
-    overflow: hidden;
-  }
 }
 
 /***************************************************************/
@@ -361,3 +348,38 @@ body {
 #followup tr:nth-child(even) {
   background-color: var(--clr-even-background);
 }
+
+@container cardtable ((width > 93rem) and style(--card-size:red)) or style(--card-size:white) {
+  .cardcontainer {
+    grid-template-columns: repeat(auto-fit, var(--width-card-big));
+  }
+
+  .card {
+    height: var(--height-card-big);
+  }
+}
+
+@container cardtable ((width < 93rem) and style(--card-size:red)) or style(--card-size:blue) {
+  .cardcontainer {
+    grid-template-columns: repeat(auto-fit, var(--width-card-small));
+  }
+
+  .card {
+    height: var(--height-card-small);
+  }
+}
+
+@container cardtable style(--card-size:green) {
+  .cardcontainer {
+    grid-template-columns: repeat(auto-fit, var(--width-card-xsmall));
+  }
+
+  .card {
+    height: var(--height-card-xsmall);
+  }
+
+  .parameter {
+    margin-left: 0;
+  }
+}
+

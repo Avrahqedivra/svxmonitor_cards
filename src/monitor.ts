@@ -49,7 +49,7 @@ let dashboard_server: WebSocketServer = null
 // system variables
 const extensions: string[] = ['.ico', '.jpg', '.png', '.gif', '.svg', '.css', '.js', '.mp3', '.mp4', '.webm', '.mpeg', '.ogg', '.ppt', '.pptx', '.woff2']
 
-export let __version__: string          = "2.1.0"
+export let __version__: string          = "2.2.0"
 export let __sessions__: any[]          = []
 export let __mobilePhone__: boolean     = false
 
