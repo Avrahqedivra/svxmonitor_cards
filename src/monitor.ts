@@ -285,9 +285,6 @@ class Monitor {
         // get callsign minus ending colon
         let callsign = dataTokens[0].slice(0, -1)
         
-        // if (callsign == 'F5ZXD-R')
-        //   console.log('ok')
-
         address = dataTokens[4].split(':')
 
         if ((clientIndex = this.clientFromAddress(address)) != -1) {
