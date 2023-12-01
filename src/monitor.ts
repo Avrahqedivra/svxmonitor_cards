@@ -64,7 +64,7 @@ enum States {
 
 const DATALENGTH    = 19
 
-const SVXREFLECTOR_START = 'SvxReflector v1'
+const SVXREFLECTORSTART = 'SvxReflector v1'
 const CLIENT = 'Client'
 const CONNECTED = ' connected'
 const DISCONNECTED = 'disconnected:'
@@ -142,7 +142,7 @@ class Monitor {
        *  sync to first "SvxReflector v1.99.17 Copyright (C) 2003-2023 Tobias Blomberg / SM0SVX"
        */
       for(this.lineIndex=0; this.lineIndex<this.svxlinkLog.length; this.lineIndex++) {
-        if (this.svxlinkLog[this.lineIndex].indexOf(SVXREFLECTOR_START) != -1) {
+        if (this.svxlinkLog[this.lineIndex].indexOf(SVXREFLECTORSTART) != -1) {
           this.lineIndex++
           break
         }
@@ -214,6 +214,7 @@ class Monitor {
         this.clients[clientIndex].connected = date
         this.clients[clientIndex].start = ''
         this.clients[clientIndex].stop = ''
+        this.clients[clientIndex].disconnected = ''
         this.clients[clientIndex].reason = ''
         this.clients[clientIndex].line = this.lineIndex
         continue
