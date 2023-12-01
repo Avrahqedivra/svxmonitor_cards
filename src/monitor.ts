@@ -155,14 +155,14 @@ class Monitor {
 
   clientFromAddress(address: string[]): number {
     for(let i=0; i<this.clients.length; i++) {
-      if (this.clients[i].ip === '127.0.0.1' || this.clients[i].ip === '0.0.0.0') {
-        if (this.clients[i].ip == address[0] && this.clients[i].port == parseInt(address[1]))
-          return i
-      }
-      else {
+      // if (this.clients[i].ip === '127.0.0.1' || this.clients[i].ip === '0.0.0.0') {
+      //   if (this.clients[i].ip == address[0] && this.clients[i].port == parseInt(address[1]))
+      //     return i
+      // }
+      // else {
         if (this.clients[i].ip == address[0])
           return i
-      }
+      // }
     }
 
     return -1
