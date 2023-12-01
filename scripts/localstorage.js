@@ -22,7 +22,7 @@ settingsValidity = 5	    // 5 days
 settings = [ { config: { "theme": "theme-dark", "last": Date.now(), "zoom": 0, "sizeValue": 0 } } ];
 
 var zoomValue = 1
-var sizeValue = 0
+var sizeValue = 3
 
 var names = []    
 
