@@ -71,12 +71,16 @@ const DISCONNECTED = 'disconnected:'
 const LOGIN_OK_FROM = 'Login OK from'
 const MONITORING = 'Monitor TG#:'
 const SELECT = 'Select TG #'
-const TALKERSTART = 'Talker start on TG #'
-const TALKERSTOP = 'Talker stop on TG #'
+const TALKERSTART = 'Talker start on '
+const TALKERSTOP = 'Talker stop on '
+const TALKERTOT = 'Talker audio timeout on'
 const FRAMELOST = 'UDP frame(s) lost. Expected'
 const UNKNOWNUSER = '*** WARNING: Unknown user'
+const INVALIDUDP = '*** WARNING: Incoming UDP datagram from'
+const BAILRENEW = 'Incoming UDP packet has the wrong source ip'
 const AUTHFAILED = 'Authentication failed for user'
 const HEARTBEAT = 'TCP heartbeat timeout'
+const ALREADY = 'Already connected'
 
 const REFLECTOR = true
 const SVXLINK = false
@@ -244,6 +248,21 @@ class Monitor {
       }      
 
       /**
+       * FXXXX-R: Already connected
+       */
+      if (!data.startsWith(CLIENT) && (tokenIndex = data.indexOf(ALREADY)) != -1) {
+        dataTokens = data.split(' ')
+
+        if ((clientIndex = this.clientFromCallsign(dataTokens[0].slice(0, -1))) != -1) {
+          this.clients[clientIndex].disconnected = date
+          this.clients[clientIndex].reason = data.substring(tokenIndex).trim()
+          this.clients[clientIndex].line = this.lineIndex
+        }
+
+        continue
+      }
+
+      /**
        * 28.11.2023 15:46:59: FXXXX-H: TCP heartbeat timeout
        */
       if ((tokenIndex = data.indexOf(HEARTBEAT)) != -1) {
@@ -265,6 +284,10 @@ class Monitor {
 
         // get callsign minus ending colon
         let callsign = dataTokens[0].slice(0, -1)
+        
+        // if (callsign == 'F5ZXD-R')
+        //   console.log('ok')
+
         address = dataTokens[4].split(':')
 
         if ((clientIndex = this.clientFromAddress(address)) != -1) {
@@ -278,8 +301,8 @@ class Monitor {
           this.clients[clientIndex].line = this.lineIndex
 
           // remove previous connections same callsign
-          for(let k=this.clients.length-1; k>-1; k--) {
-            if (this.clients[k].callsign == callsign && (this.clients[k].ip != address[0] || this.clients[k].port != parseInt(address[1])))
+          for(let k=clientIndex-1; k>0; k--) {
+            if (this.clients[k].callsign == callsign /* && (this.clients[k].ip != address[0] || this.clients[k].port != parseInt(address[1])) */)
               this.clients.splice(k, 1)
           }
 
@@ -364,6 +387,20 @@ class Monitor {
       }
 
       /**
+       * FXXXX-R: Talker audio timeout on TG #33
+       */
+      if ((tokenIndex = data.indexOf(TALKERTOT)) != -1) {
+        dataTokens = data.split(' ')
+
+        if ((clientIndex = this.clientFromCallsign(dataTokens[0].slice(0, -1))) != -1) {
+          this.clients[clientIndex].reason = data.substring(tokenIndex).trim()
+          this.clients[clientIndex].line = this.lineIndex
+        }
+
+        continue
+      }
+
+      /**
        * FXXXX-R: UDP frame(s) lost. Expected seq=600. Received seq=601
        */
       if ((tokenIndex = data.indexOf(FRAMELOST)) != -1) {
@@ -381,10 +418,45 @@ class Monitor {
        * *** WARNING: Unknown user "(33) FXXXX H"
        */
       if ((tokenIndex = data.indexOf(UNKNOWNUSER)) != -1) {
+        if ((clientIndex = this.clientFromCallsign(dataTokens[0].slice(0, -1))) != -1) {
           this.clients[clientIndex].callsign = data.substring(tokenIndex+UNKNOWNUSER.length).trim()
           this.clients[clientIndex].line = this.lineIndex
+        }
 
-          continue
+        continue
+      }
+
+      /**
+       * *** WARNING: Incoming UDP datagram from xx.xx.xx.xx:2537 has invalid client id 36554
+       */
+      if ((tokenIndex = data.indexOf(INVALIDUDP)) != -1) {
+        dataTokens = data.split(' ')
+        let ip = dataTokens[6].split(':')
+        
+        if ((clientIndex = this.clientFromAddress(ip)) != -1) {
+          this.clients[clientIndex].reason = data
+          this.clients[clientIndex].line = this.lineIndex
+        }
+
+        continue
+      }
+
+      
+
+      /**
+       * *** WARNING[FXXXX-H]: Incoming UDP packet has the wrong source ip, xx.xx.xx.xx instead of yy.yy.yy.yy
+       * \[([^]]+)\]
+       */
+      if ((tokenIndex = data.indexOf(BAILRENEW)) != -1) {
+        dataTokens = data.split(' ')
+        let callsign = dataTokens[1].match(/\[(.*)\]/)
+        
+        if (callsign && callsign.length > 1 && ((clientIndex = this.clientFromCallsign(callsign[1])) != -1)) {
+          this.clients[clientIndex].reason = data
+          this.clients[clientIndex].line = this.lineIndex
+        }
+
+        continue
       }
 
       /**
