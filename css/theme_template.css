@@ -30,8 +30,11 @@ select::-webkit-scrollbar {
   --width-card-small: 31rem;
   --height-card-small: 5.25rem;
 
-  --width-card-xsmall: 13.5rem;
+  --width-card-xsmall: 14rem;
   --height-card-xsmall: 5.25rem;
+
+  --width-card-xxsmall: 14rem;
+  --height-card-xxsmall: 5.25rem;
 
   --sitelogo-posX: 50%;
   --sitelogo-posY: 45%;
@@ -226,7 +229,7 @@ body {
 
 .fuimg {
   float: right;
-  margin: 0.4rem 0.4rem 0 0;
+  margin: 0.35rem 0.25rem 0 0;
 }
 
 .fuimg img {
@@ -383,3 +386,33 @@ body {
   }
 }
 
+@container cardtable style(--card-size:magenta) {
+  .cardcontainer {
+    grid-template-columns: repeat(auto-fit, var(--width-card-xxsmall));
+  }
+
+  .card {
+    font-size: 0.84rem;
+    height: var(--height-card-xsmall);
+  }
+
+  .fuimg i {
+    font-size: 1.4rem;
+  }
+
+  .parameter {
+    margin-left: 0;
+  }
+
+  .callsignflag {
+    height: 0.9rem;
+  }
+  
+  .callsign {
+    font-size: 1.1rem;
+  }
+  
+  .chapter {
+      font-weight: normal;
+    }
+}

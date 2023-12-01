@@ -130,6 +130,7 @@ function cardSize(v) {
         case 1: r.style.setProperty('--card-size', 'white'); break;
         case 2: r.style.setProperty('--card-size', 'red'); break;
         case 3: r.style.setProperty('--card-size', 'green'); break;
+        case 4: r.style.setProperty('--card-size', 'magenta'); break;
     }
 
     saveSettings()
