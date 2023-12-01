@@ -19,12 +19,12 @@
 
 cookieSettingsName = window.location.hostname+"_svxmoncards_settings"
 settingsValidity = 5	    // 5 days
-settings = [ { config: { "theme": "theme-dark", "last": Date.now(), "zoom": 0, "sizeValue": 0 } } ];
+settings = [ { config: { "theme": "theme-dark", "last": Date.now(), "zoom": 0, "sizeValue": 4 } } ]
 
 var zoomValue = 1
-var sizeValue = 3
+var sizeValue = 4
 
-var names = []    
+var names = []
 
 names["Andre"] = "André"
 names["Francois"] = "François"

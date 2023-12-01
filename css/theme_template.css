@@ -165,15 +165,15 @@ body {
 }
 
 .callsignflag {
-  padding: 0.25rem 0 0 0.25rem;
+  padding: 0.3rem 0 0 0.3rem;
   width: auto;
-  height: 1.4rem;
+  height: 1.3rem;
 }
 
 .callsign {
   display: inline-block;
   color: var(--clr-card-foreground);
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-family: DashFont-Regular;
   margin: 0 0 0 0.25rem;
   font-weight: bold;
@@ -242,7 +242,7 @@ body {
 
 .fuimg i {
   color: var(--clr-page-foreground);
-  font-size: 2rem;
+  font-size: 1.6rem;
 }
 
 .fuimg i:hover {
@@ -393,7 +393,7 @@ body {
 
   .card {
     font-size: 0.84rem;
-    height: var(--height-card-xsmall);
+    height: var(--height-card-xxsmall);
   }
 
   .fuimg i {
