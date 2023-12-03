@@ -213,9 +213,6 @@ class Monitor {
           this.clients[clientIndex].logged = ''
         }
         
-        if (this.lineIndex == 36)
-          console.log('ok')
-
         // initialize empty card
         this.clients[clientIndex].connected = date
         this.clients[clientIndex].line = this.lineIndex
