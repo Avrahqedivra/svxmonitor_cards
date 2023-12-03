@@ -289,6 +289,8 @@ class Monitor {
         address = dataTokens[4].split(':')
 
         if ((clientIndex = this.clientFromAddress(address)) != -1) {
+          let created: number = this.clients[clientIndex].created
+
           this.clients[clientIndex].callsign = callsign
           this.clients[clientIndex].logged = date
           this.clients[clientIndex].protocol = dataTokens[8]
@@ -299,8 +301,8 @@ class Monitor {
           this.clients[clientIndex].line = this.lineIndex
 
           // remove previous connections same callsign
-          for(let k=clientIndex-1; k>0; k--) {
-            if (this.clients[k].callsign == callsign /* && (this.clients[k].ip != address[0] || this.clients[k].port != parseInt(address[1])) */)
+          for(let k=this.clients.length-1; k>=0; k--) {
+            if (this.clients[k].created != created && this.clients[k].callsign == callsign /* && (this.clients[k].ip != address[0] || this.clients[k].port != parseInt(address[1])) */)
               this.clients.splice(k, 1)
           }
 
