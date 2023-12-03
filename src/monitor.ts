@@ -66,7 +66,7 @@ const DATALENGTH    = 19
 
 const SVXREFLECTORSTART = 'SvxReflector v1'
 const CLIENT = 'Client'
-const CONNECTED = ' connected'
+const CONNECTED = 'connected'
 const DISCONNECTED = 'disconnected:'
 const LOGIN_OK_FROM = 'Login OK from'
 const MONITORING = 'Monitor TG#:'
@@ -85,6 +85,7 @@ const ALREADY = 'Already connected'
 const REFLECTOR = true
 const SVXLINK = false
 
+let vulture: number = 0
 let lastCheck: Date = new Date(0)
 let logType = (config.__log_name__.indexOf('reflector') != -1) ? REFLECTOR : SVXLINK
 
@@ -155,14 +156,8 @@ class Monitor {
 
   clientFromAddress(address: string[]): number {
     for(let i=0; i<this.clients.length; i++) {
-      // if (this.clients[i].ip === '127.0.0.1' || this.clients[i].ip === '0.0.0.0') {
-      //   if (this.clients[i].ip == address[0] && this.clients[i].port == parseInt(address[1]))
-      //     return i
-      // }
-      // else {
-        if (this.clients[i].ip == address[0])
-          return i
-      // }
+      if (this.clients[i].ip == address[0])
+        return i
     }
 
     return -1
@@ -178,10 +173,10 @@ class Monitor {
   }
 
   updateLog() {
-    let clientIndex = -1
-    let tokenIndex = -1
-    let dataTokens = []
-    let address:string[]
+    let clientIndex: number = -1
+    let tokenIndex: number = -1
+    let dataTokens:string[] = []
+    let address:string[] = []
 
     let allFileContents = fs.readFileSync(`${config.__log_path__}${config.__log_name__}`, { encoding: 'utf-8' } )
     this.svxlinkLog = allFileContents.split(/\r?\n/)
@@ -202,20 +197,27 @@ class Monitor {
       /**
        * Client 127.0.0.1:52900 connected
        */
-      if (data.startsWith(CLIENT) && data.indexOf(CONNECTED) != -1) {
+      if (data.startsWith(CLIENT) && data.endsWith(CONNECTED)) {
         dataTokens = data.split(' ')
         address = dataTokens[1].split(':')
         
+        // if ip not found, create card
         if ((clientIndex = this.clientFromAddress(address)) == -1) {
           this.clients.push(new Client(address[0], parseInt(address[1])))
           clientIndex = this.clients.length-1
         }
+        else {
+          // reset existing card
+          this.clients[clientIndex].port = parseInt(address[1])
+          this.clients[clientIndex].disconnected = ''
+          this.clients[clientIndex].logged = ''
+        }
         
+        if (this.lineIndex == 36)
+          console.log('ok')
+
+        // initialize empty card
         this.clients[clientIndex].connected = date
-        this.clients[clientIndex].start = ''
-        this.clients[clientIndex].stop = ''
-        this.clients[clientIndex].disconnected = ''
-        this.clients[clientIndex].reason = ''
         this.clients[clientIndex].line = this.lineIndex
         continue
       }
@@ -264,7 +266,7 @@ class Monitor {
       }
 
       /**
-       * 28.11.2023 15:46:59: FXXXX-H: TCP heartbeat timeout
+       * FXXXX-H: TCP heartbeat timeout
        */
       if ((tokenIndex = data.indexOf(HEARTBEAT)) != -1) {
         dataTokens = data.split(' ')
@@ -751,6 +753,19 @@ class Monitor {
     // reload the log
     let stats = fs.statSync(`${config.__log_path__}${config.__log_name__}`)
 
+/*    
+    if (Date.now() - vulture  > 30000) {
+      vulture = Date.now()
+
+      for(let i=this.clients.length; i>0; i--) {
+        let client: Client = this.clients[i]
+
+        if (!client.logged.length && client.connected) {
+
+        }
+      }
+    }
+*/
     if (stats.mtime > lastCheck) {
       lastCheck = stats.mtime
 
