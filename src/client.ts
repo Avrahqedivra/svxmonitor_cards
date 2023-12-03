@@ -22,6 +22,7 @@
 */
 
 export class Client {
+  private _created: number = Date.now()
   private _ip: string = ''
   private _port: number = -1
   private _callsign: string = ''
@@ -62,6 +63,17 @@ export class Client {
 
   public get port() {
     return this._port
+  }
+
+  /**
+   * Created getter/setter
+   */
+  public set created(thecreated: number) {
+    this._created = thecreated
+  }
+
+  public get created() {
+    return this._created
   }
 
   /**

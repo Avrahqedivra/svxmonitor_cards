@@ -213,7 +213,8 @@ class Monitor {
           this.clients[clientIndex].logged = ''
         }
         
-        // initialize empty card
+        // update current card
+        this.clients[clientIndex].created = Date.now()
         this.clients[clientIndex].connected = date
         this.clients[clientIndex].line = this.lineIndex
         continue
@@ -750,19 +751,20 @@ class Monitor {
     // reload the log
     let stats = fs.statSync(`${config.__log_path__}${config.__log_name__}`)
 
-/*    
+    // check for ghosts every 30s
     if (Date.now() - vulture  > 30000) {
       vulture = Date.now()
 
-      for(let i=this.clients.length; i>0; i--) {
+      for(let i=this.clients.length-1; i>=0; i--) {
         let client: Client = this.clients[i]
 
-        if (!client.logged.length && client.connected) {
-
+        // remove ghost if login didn't happen within 10s after connection
+        if (!client.logged.length && (vulture - client.created) > 10000) {
+          this.clients.splice(i, 1)
         }
       }
     }
-*/
+
     if (stats.mtime > lastCheck) {
       lastCheck = stats.mtime
 
