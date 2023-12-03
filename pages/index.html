@@ -140,7 +140,7 @@
      */
     function getDateNow() {
         let d = new Date()
-        return `${d.getDate().toString().padStart(2, ' ')}.${(d.getMonth()+1).toString().padStart(2, ' ')}.${d.getFullYear()} ${d.toLocaleTimeString('FR', {hour12: false})}`
+        return `${d.getDate().toString().padStart(2, ' ')}.${(d.getMonth()+1).toString().padStart(2, ' ')}.${d.getFullYear().toString()} ${d.toLocaleTimeString('FR', {hour12: false})}`
     }
 
     function parseDateFR(d) {
@@ -152,6 +152,15 @@
         var date1 = parseDateFR(start)
         var diff = (date2.getTime() - date1.getTime()) / 1000
         return Math.floor(diff)
+    }
+
+    function formatDate(d) {        
+        if (d.length == 19) {
+            let str = d.replaceAll('.', '/')
+            return str.substring(0, 6) + str.substring(8)
+        }
+
+        return d
     }
 
     function decomposeSeconds(start, stop) {
@@ -230,16 +239,16 @@
                     //     $(`#qrz${talker}`).attr('src', `${link}`)
                     // })
 
-                    content += `<div class='transmit'><div class='chapter'>last xmit:</div><div class='parameter'>${record._start.length ? record._start: 'n/a'}&nbsp;</div>`
+                    content += `<div class='transmit'><div class='chapter'>last xmit:</div><div class='parameter'>${record._start.length ? formatDate(record._start): 'n/a'}</div>`
 
                     if (record._stop.length == 0) { // still online
                         addTicker(record)
-                        content += `<br class='smallbreak'><div class='chapter'>duration:</div><div class='ticker ticker${record._callsign}'>n/a</div>`
+                        content += `<div class='chapter3'>duration:</div><div class='ticker ticker${record._callsign}'>n/a</div>`
                     }
                     else {
                         deleteTicker(record)
                         try {
-                            content += `<div class='chapter'>duration:</div> ${secondsBetweenDates(record._start, record._stop)}s`
+                            content += `<div class='chapter3'>duration:</div><div class='ticker'>${secondsBetweenDates(record._start, record._stop)}s</></div>`
                         }
                         catch(e) {
                             log(e)
@@ -247,18 +256,18 @@
                     }
                     content += `</div>`
 
-                    content += `<div class='monitoring'><div class='chapter'>monitoring:</div> ${record._monitoring.length ? record._monitoring.toString() : 'none'}, <div class='chapter'>selected:</div> ${record._current < 1 ? 'default' : record._current}</div>`
+                    content += `<div class='monitoring'><div class='chapter'>monitoring:</div>${record._monitoring.length ? record._monitoring.toString() : 'none'}, <div class='chapter'>selected:</div>${record._current < 1 ? 'default' : record._current}</div>`
                 content += `</div>`
 
                 content += `<div class='secondGroup'><div class='hotspot'>Hotspot</div>`
-                    content += `<div class='address'><div class='chapter'>ip address:</div> ${record._ip}<div class='chapter2'>port:</div> ${record._port}</div>`
-                    content += `<div class='loggedon'><div class='chapter'>logged on:</div> ${record._connected} using <div class='chapter'>protocol</div>&nbsp;v${record._protocol}</div>`
+                    content += `<div class='address'><div class='chapter'>ip address:</div>${record._ip}<div class='chapter2'>port:</div>${record._port}</div>`
+                    content += `<div class='loggedon'><div class='chapter'>logged on:</div>${formatDate(record._connected)} using <div class='chapter4'>protocol</div>v${record._protocol}</div>`
                     if (record._disconnected.length == 0) { // still online 
                         content += `<div class='loggedoff'><div class='chapter'>online since:</div>🟢 ${decomposeSeconds(record._connected, getDateNow())}</div>`
                         content += `<div class='reason ellipsis'><div class='chapter'>status:</div>${record._reason}</div>`
                     }
                     else {
-                        content += `<div class='loggedoff'><div class='chapter'>logged off:</div>⚪ ${record._disconnected}</div>`
+                        content += `<div class='loggedoff'><div class='chapter'>logged off:</div>⚪ ${formatDate(record._disconnected)}</div>`
                         content += `<div class='reason ellipsis'><div class='chapter'>reason:</div> ${record._reason}</div>`
                     }
                 content += "</div>"

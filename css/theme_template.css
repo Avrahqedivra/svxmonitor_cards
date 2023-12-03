@@ -30,11 +30,11 @@ select::-webkit-scrollbar {
   --width-card-small: 31rem;
   --height-card-small: 5.25rem;
 
-  --width-card-xsmall: 14rem;
+  --width-card-xsmall: 15rem;
   --height-card-xsmall: 5.25rem;
 
   --width-card-xxsmall: 14rem;
-  --height-card-xxsmall: 5.25rem;
+  --height-card-xxsmall: 4.5rem;
 
   --sitelogo-posX: 50%;
   --sitelogo-posY: 45%;
@@ -222,9 +222,22 @@ body {
   margin-left: 1.5rem;
 }
 
+.chapter3 {
+  display: inline-block;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.chapter4 {
+  display: inline-block;
+  font-weight: bold;
+  margin-right: 0.25rem;
+}
+
 .parameter {
   display: inline-block;
   margin-left: 1rem;
+  margin-right: 0.25rem;
 }
 
 .firstGroup {
@@ -388,6 +401,15 @@ body {
   .parameter {
     margin-left: 0;
   }
+
+  .chapter3 {
+    display: none;
+  }
+
+  .ticker {
+    float: right;
+    margin-right: 0.25rem;    
+  }
 }
 
 @container cardtable style(--card-size:magenta) {
@@ -417,6 +439,19 @@ body {
   }
   
   .chapter {
-      font-weight: normal;
-    }
+    font-weight: normal;
+  }
+
+  .chapter {
+    font-weight: normal;
+  }
+
+  .chapter3 {
+    display: none;
+  }
+
+  .ticker {
+    float: right;
+    margin-right: 0.25rem;    
+  }
 }
