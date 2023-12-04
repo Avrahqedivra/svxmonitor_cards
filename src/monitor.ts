@@ -128,6 +128,7 @@ function treatDate(dateObj: Date): any {
 }
 
 class Monitor {
+  private logfilename = `${config.__log_path__}${config.__log_name__}`
   private webServer: http.Server = null
   private svxlinkLog: string[]
   private clients: Client[] = []
@@ -136,16 +137,18 @@ class Monitor {
 
   constructor() {
     try {
-      let allFileContents = fs.readFileSync(`${config.__log_path__}${config.__log_name__}`, { encoding: 'utf-8' } )
-      this.svxlinkLog = allFileContents.split(/\r?\n/)
+      if (fs.existsSync(this.logfilename)) {
+        let allFileContents = fs.readFileSync(this.logfilename, { encoding: 'utf-8' } )
+        this.svxlinkLog = allFileContents.split(/\r?\n/)
 
-      /**
-       *  sync to first "SvxReflector v1.99.17 Copyright (C) 2003-2023 Tobias Blomberg / SM0SVX"
-       */
-      for(this.lineIndex=0; this.lineIndex<this.svxlinkLog.length; this.lineIndex++) {
-        if (this.svxlinkLog[this.lineIndex].indexOf(SVXREFLECTORSTART) != -1) {
-          this.lineIndex++
-          break
+        /**
+         *  sync to first "SvxReflector v1.99.17 Copyright (C) 2003-2023 Tobias Blomberg / SM0SVX"
+         */
+        for(this.lineIndex=0; this.lineIndex<this.svxlinkLog.length; this.lineIndex++) {
+          if (this.svxlinkLog[this.lineIndex].indexOf(SVXREFLECTORSTART) != -1) {
+            this.lineIndex++
+            break
+          }
         }
       }
     }
@@ -177,8 +180,10 @@ class Monitor {
     let tokenIndex: number = -1
     let dataTokens:string[] = []
     let address:string[] = []
+    if (!fs.existsSync(this.logfilename))
+      return
 
-    let allFileContents = fs.readFileSync(`${config.__log_path__}${config.__log_name__}`, { encoding: 'utf-8' } )
+    let allFileContents = fs.readFileSync(this.logfilename, { encoding: 'utf-8' } )
     this.svxlinkLog = allFileContents.split(/\r?\n/)
     
     // console.log(this.lineIndex.toString().padStart(5, '0'))
@@ -193,6 +198,11 @@ class Monitor {
 
       let date = this.logline.substring(0, DATALENGTH).trim()
       let data = this.logline.substring(DATALENGTH+1).trim()
+
+      if (data.indexOf(SVXREFLECTORSTART) != -1) {
+        this.clients = []
+        continue
+      }
 
       /**
        * Client 127.0.0.1:52900 connected
@@ -751,7 +761,7 @@ class Monitor {
 
   updateDashboard() {
     // reload the log
-    let stats = fs.statSync(`${config.__log_path__}${config.__log_name__}`)
+    let stats = fs.statSync(this.logfilename)
 
     // check for ghosts every 30s
     if (Date.now() - vulture  > 30000) {
@@ -936,8 +946,8 @@ class Monitor {
             if (config.__web_auth__ && sessionmgr.sessions.hasOwnProperty(requestip))
               delete sessionmgr.sessions[requestip]
           })
-          
-          message["PACKETS"] = { TRAFFIC: this.postProd(this.clients) }
+
+          message["PACKETS"] = { 'TRAFFIC': this.postProd(this.clients) }
 
           ws.send(JSON.stringify({ CONFIG: message }))
 
