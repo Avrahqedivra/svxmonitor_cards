@@ -49,7 +49,7 @@ let dashboard_server: WebSocketServer = null
 // system variables
 const extensions: string[] = ['.ico', '.jpg', '.png', '.gif', '.svg', '.css', '.js', '.mp3', '.mp4', '.webm', '.mpeg', '.ogg', '.ppt', '.pptx', '.woff2']
 
-export let __version__: string          = "2.2.0"
+export let __version__: string          = "2.3.0"
 export let __sessions__: any[]          = []
 export let __mobilePhone__: boolean     = false
 
@@ -204,7 +204,10 @@ class Monitor {
        */
       if (data.indexOf(SVXREFLECTORSTART) != -1) {
         for(let i=0; i<this.clients.length; i++) {
+          if (this.clients[i].start != '')        
+            this.clients[i].stop = date
           this.clients[i].disconnected = date
+          this.clients[i].logged = ''
           this.clients[i].reason = `${data.substring(0, 21)} has restarted`
           this.clients[i].line = this.lineIndex
         }
