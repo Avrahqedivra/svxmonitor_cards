@@ -199,8 +199,15 @@ class Monitor {
       let date = this.logline.substring(0, DATALENGTH).trim()
       let data = this.logline.substring(DATALENGTH+1).trim()
 
+      /**
+       * SvxReflector v1.99.17 Copyright (C) 2003-2023 Tobias Blomberg / SM0SVX
+       */
       if (data.indexOf(SVXREFLECTORSTART) != -1) {
-        this.clients = []
+        for(let i=0; i<this.clients.length; i++) {
+          this.clients[i].disconnected = date
+          this.clients[i].reason = `${data.substring(0, 21)} has restarted`
+          this.clients[i].line = this.lineIndex
+        }
         continue
       }
 
