@@ -132,43 +132,24 @@ sitelogo {
   transform: translateX(calc(-1 * var(--sitelogo-posX)));
 }
 
-#menuSearch {
-  /* This bit sets up the horizontal layout */
-  display:flex;
-  flex-direction:row;
-  
-  /* This bit draws the box around it */
-  border:none;
-
-  /* I've used padding so you can see the edges of the elements. */
-  padding: 1px;
-}
-
-#menuSearch input {
-  /* Tell the input to use all the available space */
-  flex-grow: 2;
-  /* And hide the input's outline, so the form looks like the outline */
-  border: none;
-  max-width: 8rem;
-}
-
-/* remove the input focus blue box, it will be in the wrong place. */
-#menuSearch input:focus {
-  outline: none;
-}
-
-/* Add the focus effect to the form so it contains the button */
-#menuSearch:focus-within { 
-  /* outline: 1px solid var(--clr-menubar-foreground); */
-  outline: none;
-}
-
 #menuSearch button {
-  /* Just a little styling to make it pretty */
   background-color: var(--clr-menubar-background);
   color:var(--clr-menubar-foreground);
   border-style: unset;
-  padding: 0;
   width: 1.4rem;
+  padding: 0;
   margin: 0;
+}
+
+#menuSearch input {
+  background: none;
+  border: none;
+  transition: 0.4s;
+  width: 0;
+}
+
+#menuSearch:hover input, #menuSearch input:focus-within {
+  outline: none;
+  width: 8rem;
+  background: var(--clr-menubar-foreground);
 }
