@@ -203,6 +203,10 @@ body {
   margin: 0.25rem;  
 }
 
+.loggedTicker {
+  display: inline-block;
+}
+
 .ticker {
   color: var(--clr-online-foreground);
   display: inline-block;

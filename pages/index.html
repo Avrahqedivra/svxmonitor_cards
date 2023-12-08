@@ -201,6 +201,14 @@
         return result
     }
 
+    function updateLoggedTickers() {
+        var tickers = document.getElementsByClassName('loggedTicker')
+
+        for(let i=0; i<tickers.length; i++) {
+            tickers[i].innerHTML = decomposeSeconds(tickers[i].getAttribute("value"), getDateNow())
+        }
+    }
+
     var traffic = [];
 
     /*
@@ -268,7 +276,7 @@
                     content += `<div class='address'><div class='chapter'>ip address:</div>${record._ip}<div class='chapter2'>port:</div>${record._port}</div>`
                     content += `<div class='loggedon'><div class='chapter'>logged on:</div>${formatDate(record._connected)} using <div class='chapter4'>protocol</div>v${record._protocol}</div>`
                     if (record._disconnected.length == 0) { // still online 
-                        content += `<div class='loggedoff'><div class='chapter'>online since:</div>🟢 ${decomposeSeconds(record._connected, getDateNow())}</div>`
+                        content += `<div class='loggedoff'><div class='chapter'>online since:</div>🟢 <div ${record._connected} ? class='loggedTicker':'' value='${record._connected}'>${decomposeSeconds(record._connected, getDateNow())}</div></div>`
                         content += `<div class='reason ellipsis'><div class='chapter'>status:</div>${record._reason}</div>`
                     }
                     else {
@@ -419,6 +427,10 @@
                     log("Connected to " + url)
 
                     ticker = setInterval(() => {
+                        // if cardsize is big or auto
+                        if (sizeValue === 1 || sizeValue === 2)
+                            updateLoggedTickers()
+
                         // Update the time every second
                         updateTime()
 
