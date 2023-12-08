@@ -777,13 +777,18 @@ class Monitor {
     if (Date.now() - vulture  > 30000) {
       vulture = Date.now()
 
+      let seen = new Set()
+
       for(let i=this.clients.length-1; i>=0; i--) {
         let client: Client = this.clients[i]
 
-        // remove ghost if login didn't happen within 10s after connection
-        if (!client.logged.length && (vulture - client.created) > 10000) {
+        // remove ghost if duplicate callsign or if login didn't happen within 10s after connection
+        if (seen.has(client.callsign) || (!client.logged.length && (vulture - client.created) > 10000)) {
           this.clients.splice(i, 1)
+          continue
         }
+
+        seen.add(client.callsign)
       }
     }
 
