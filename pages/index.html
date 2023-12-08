@@ -54,6 +54,11 @@
 </body>
 
 <script>
+    function updateTime() {
+        var now = new Date();
+        document.getElementById("clock").textContent = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+    }
+
 	function getQRZImage(callsign, callback) {
 		const no_image_link = "https://s3.amazonaws.com/files.qrz.com/static/qrz/qrz_com200x150.jpg"
 		let cacheItem = urlCache[callsign]
@@ -368,6 +373,8 @@
 
         document.getElementById("menuSearch").style.display = "inline-block"
 
+        updateTime()
+        
 		// don't show banner if already done within 3600s
 		if (bannerDelay == 0 || (settings[0].config.last != 0 && ((Date.now() - settings[0].config.last) / 1000) < 3600)) {
 			$("#menubar").show();
@@ -413,7 +420,7 @@
 
                     ticker = setInterval(() => {
                         // Update the time every second
-                        // updateTime();
+                        updateTime()
 
                         for (let i = 0; i < tickerCallsign.length; i++) {
                             tickerCallsign[i].delay++

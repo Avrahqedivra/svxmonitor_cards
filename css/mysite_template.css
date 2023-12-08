@@ -153,3 +153,8 @@ sitelogo {
   width: 8rem;
   background: var(--clr-menubar-foreground);
 }
+
+.clock {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
