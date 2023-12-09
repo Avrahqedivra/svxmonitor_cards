@@ -77,9 +77,9 @@ const TALKERTOT = 'Talker audio timeout on'
 const FRAMELOST = 'UDP frame(s) lost. Expected'
 const UNKNOWNUSER = '*** WARNING: Unknown user'
 const INVALIDUDP = '*** WARNING: Incoming UDP datagram from'
-const BAILRENEW = 'Incoming UDP packet has the wrong source ip'
+const WARNINGBRACKET = '*** WARNING['
 const AUTHFAILED = 'Authentication failed for user'
-const HEARTBEAT = 'TCP heartbeat timeout'
+const HEARTBEAT = 'heartbeat timeout'
 const ALREADY = 'Already connected'
 
 const REFLECTOR = true
@@ -275,7 +275,6 @@ class Monitor {
         dataTokens = data.split(' ')
 
         if ((clientIndex = this.clientFromCallsign(dataTokens[0].slice(0, -1))) != -1) {
-          this.clients[clientIndex].disconnected = date
           this.clients[clientIndex].reason = data.substring(tokenIndex).trim()
           this.clients[clientIndex].line = this.lineIndex
         }
@@ -461,24 +460,6 @@ class Monitor {
         continue
       }
 
-      
-
-      /**
-       * *** WARNING[FXXXX-H]: Incoming UDP packet has the wrong source ip, xx.xx.xx.xx instead of yy.yy.yy.yy
-       * \[([^]]+)\]
-       */
-      if ((tokenIndex = data.indexOf(BAILRENEW)) != -1) {
-        dataTokens = data.split(' ')
-        let callsign = dataTokens[1].match(/\[(.*)\]/)
-        
-        if (callsign && callsign.length > 1 && ((clientIndex = this.clientFromCallsign(callsign[1])) != -1)) {
-          this.clients[clientIndex].reason = data
-          this.clients[clientIndex].line = this.lineIndex
-        }
-
-        continue
-      }
-
       /**
        * Client 90.XXX.XXX.96:49376 Authentication failed for user "(33) FXXXX H"
        */
@@ -488,6 +469,25 @@ class Monitor {
         
         if ((clientIndex = this.clientFromAddress(address)) != -1) {
           this.clients[clientIndex].reason = data.substring(tokenIndex).trim()
+          this.clients[clientIndex].line = this.lineIndex
+        }
+
+        continue
+      }
+
+      /**
+       * Generic string parser, must stay at the bottom
+       */
+
+      /**
+       * *** WARNING[FXXXX-H]: Incoming UDP packet has the wrong source UDP port number, 8555 instead of 8762
+       */
+      if (data.startsWith(WARNINGBRACKET)) {
+        dataTokens = data.split(' ')
+        let callsign = dataTokens[1].match(/\[(.*)\]/)
+        
+        if (callsign && callsign.length > 1 && ((clientIndex = this.clientFromCallsign(callsign[1])) != -1)) {
+          this.clients[clientIndex].reason = data
           this.clients[clientIndex].line = this.lineIndex
         }
 
