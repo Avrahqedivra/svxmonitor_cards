@@ -81,6 +81,7 @@ const WARNINGBRACKET = '*** WARNING['
 const AUTHFAILED = 'Authentication failed for user'
 const HEARTBEAT = 'heartbeat timeout'
 const ALREADY = 'Already connected'
+const DROPPINGOUTSEQ = 'Dropping out of sequence frame with seq'
 
 const REFLECTOR = true
 const SVXLINK = false
@@ -180,6 +181,8 @@ class Monitor {
     let tokenIndex: number = -1
     let dataTokens:string[] = []
     let address:string[] = []
+    let lastAddress: string[] = []
+
     if (!fs.existsSync(this.logfilename))
       return
 
@@ -220,9 +223,10 @@ class Monitor {
       if (data.startsWith(CLIENT) && data.endsWith(CONNECTED)) {
         dataTokens = data.split(' ')
         address = dataTokens[1].split(':')
-        
+
         // if ip not found, create card
         if ((clientIndex = this.clientFromAddress(address)) == -1) {
+          lastAddress = address
           this.clients.push(new Client(address[0], parseInt(address[1])))
           clientIndex = this.clients.length-1
         }
@@ -274,6 +278,10 @@ class Monitor {
       if (!data.startsWith(CLIENT) && (tokenIndex = data.indexOf(ALREADY)) != -1) {
         dataTokens = data.split(' ')
 
+        // remove last created empty card
+        if ((clientIndex = this.clientFromAddress(lastAddress)) != -1)
+          this.clients.splice(clientIndex, 1)
+
         if ((clientIndex = this.clientFromCallsign(dataTokens[0].slice(0, -1))) != -1) {
           this.clients[clientIndex].reason = data.substring(tokenIndex).trim()
           this.clients[clientIndex].line = this.lineIndex
@@ -297,6 +305,48 @@ class Monitor {
       }
 
       /**
+       * FXXXX-H: Dropping out of sequence frame with seq=xxx. Expected seq=yyy
+       */
+      if ((tokenIndex = data.indexOf(DROPPINGOUTSEQ)) != -1) {
+        dataTokens = data.split(' ')
+
+        if ((clientIndex = this.clientFromCallsign(dataTokens[0].slice(0, -1))) != -1) {
+          this.clients[clientIndex].reason = data.substring(tokenIndex).trim()
+          this.clients[clientIndex].line = this.lineIndex
+        }
+
+        continue
+      }
+
+      /**
+       * FXXXX-R: Talker audio timeout on TG #33
+       */
+      if ((tokenIndex = data.indexOf(TALKERTOT)) != -1) {
+        dataTokens = data.split(' ')
+
+        if ((clientIndex = this.clientFromCallsign(dataTokens[0].slice(0, -1))) != -1) {
+          this.clients[clientIndex].reason = data.substring(tokenIndex).trim()
+          this.clients[clientIndex].line = this.lineIndex
+        }
+
+        continue
+      }
+
+      /**
+       * FXXXX-R: UDP frame(s) lost. Expected seq=600. Received seq=601
+       */
+      if ((tokenIndex = data.indexOf(FRAMELOST)) != -1) {
+        dataTokens = data.split(' ')
+
+        if ((clientIndex = this.clientFromCallsign(dataTokens[0].slice(0, -1))) != -1) {
+          this.clients[clientIndex].reason = data.substring(dataTokens[0].length).trim()
+          this.clients[clientIndex].line = this.lineIndex
+        }
+
+        continue
+      }
+
+      /**
        * FXXXX-R: Login OK from 127.0.0.1:52900 with protocol version 2.0
        */
       if ((tokenIndex = data.indexOf(LOGIN_OK_FROM)) != -1) {
@@ -304,12 +354,12 @@ class Monitor {
 
         // get callsign minus ending colon
         let callsign = dataTokens[0].slice(0, -1)
-        
+
         address = dataTokens[4].split(':')
 
+        // look for existing card with callsign
         if ((clientIndex = this.clientFromAddress(address)) != -1) {
-          let created: number = this.clients[clientIndex].created
-
+          // fill the new card
           this.clients[clientIndex].callsign = callsign
           this.clients[clientIndex].logged = date
           this.clients[clientIndex].protocol = dataTokens[8]
@@ -318,15 +368,21 @@ class Monitor {
           this.clients[clientIndex].reason = ''
           this.clients[clientIndex].history = []
           this.clients[clientIndex].line = this.lineIndex
+        } 
 
-          // remove previous connections same callsign
-          for(let k=this.clients.length-1; k>=0; k--) {
-            if (this.clients[k].created != created && this.clients[k].callsign == callsign /* && (this.clients[k].ip != address[0] || this.clients[k].port != parseInt(address[1])) */)
-              this.clients.splice(k, 1)
+        for(let k=0; k<this.clients.length; k++) {
+          if (this.clients[k].created != this.clients[clientIndex].created && this.clients[k].callsign == callsign) {
+            this.clients[clientIndex].created = this.clients[k].created
+            this.clients[clientIndex].start = this.clients[k].start
+            this.clients[clientIndex].stop = this.clients[k].stop
+            this.clients[clientIndex].reason = this.clients[k].reason
+            this.clients[clientIndex].history = this.clients[k].history
+
+            this.clients.splice(k, 1)
+            break
           }
-
-          clientIndex = this.clientFromCallsign(callsign)
         }
+
         continue
       }
 
@@ -400,34 +456,6 @@ class Monitor {
           this.clients[clientIndex].reason = ''
           this.clients[clientIndex].line = this.lineIndex
           this.clients[clientIndex].history.push(this.logline)
-        }
-
-        continue
-      }
-
-      /**
-       * FXXXX-R: Talker audio timeout on TG #33
-       */
-      if ((tokenIndex = data.indexOf(TALKERTOT)) != -1) {
-        dataTokens = data.split(' ')
-
-        if ((clientIndex = this.clientFromCallsign(dataTokens[0].slice(0, -1))) != -1) {
-          this.clients[clientIndex].reason = data.substring(tokenIndex).trim()
-          this.clients[clientIndex].line = this.lineIndex
-        }
-
-        continue
-      }
-
-      /**
-       * FXXXX-R: UDP frame(s) lost. Expected seq=600. Received seq=601
-       */
-      if ((tokenIndex = data.indexOf(FRAMELOST)) != -1) {
-        dataTokens = data.split(' ')
-
-        if ((clientIndex = this.clientFromCallsign(dataTokens[0].slice(0, -1))) != -1) {
-          this.clients[clientIndex].reason = data.substring(dataTokens[0].length).trim()
-          this.clients[clientIndex].line = this.lineIndex
         }
 
         continue
