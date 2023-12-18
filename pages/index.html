@@ -55,8 +55,11 @@
 
 <script>
     function updateTime() {
-        var now = new Date();
-        document.getElementById("clock").textContent = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+        document.getElementById("clock").textContent = new Date().toLocaleTimeString("fr-fr", {
+            hour:   '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        })
     }
 
 	function getQRZImage(callsign, callback) {
