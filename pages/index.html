@@ -17,7 +17,7 @@
 
     __BUTTON_BAR__
 
-    <div id="modals">
+    <div id="modals">  
         <!-- The Followup -->
         <div id="followUpModal" class="modal">
             <!-- Modal content -->
@@ -127,7 +127,7 @@
 		// })
 
         $("#followup").append(content);
-        $("#followUpModal").show();
+        $("#followUpModal").show().focus();
 	}
 
 	function followupcallsign() {
@@ -356,9 +356,22 @@
 
         document.cookie = "SameSite=None; Secure"
 
-		$(document).on("click", ".close", function () {
+		$(document).on("click", ".close", () => {
 			$("#followUpModal").hide();
 		})
+
+		$("#search").on('keyup', (e) => {
+			if (e.key === 'Enter' || e.keyCode === 13) {
+				followupcallsign()
+			}
+		})
+
+        $(document).on('keydown', (e) => {
+            if (e.key === 'Escape' || e.keyCode === 27) {
+                $("#followUpModal").hide()
+                document.activeElement.blur()
+            }
+        })
 
         initMenubar();
     })
